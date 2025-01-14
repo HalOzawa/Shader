@@ -74,20 +74,38 @@ float4 PS(VS_OUT inData) : SV_Target
     float3 dir = normalize(lightPosition.xyz - inData.wpos.xyz);
     //inData.normal.z = 0;
     float color = saturate(dot(normalize(inData.normal.xyz), dir));
+    
+    float OutColor;
+    if(color < 1/4)
+    {
+        OutColor = 0.0f;
+    }else if(color < 2/4)
+    {
+        OutColor = 2 / 4.0f;
+    }else if(color < 3/4)
+    {
+        OutColor = 3 / 4.0f;
+    }else
+    {
+        OutColor = 4 / 4.0f;
+    }
     //Œ¸Š
-    float3 k = { 1.0f, 1.0f, 1.0f };
+    float3 k = { 0.2f, 0.2f, 1.0f };
     float len = length(lightPosition.xyz - inData.wpos.xyz);
     float dTern = saturate(1.0 / (k.x + k.y*len + k.z*len*len));
+    
+    float4 R = reflect(normalize(inData.normal), normalize(float4(dir, 1.0)));
+    float4 specular = pow(saturate(dot(R, normalize(inData.eyev))), shininess) * specularColor;
     
     if (isTextured == false)
     {
         diffuse = diffuseColor * color * dTern * factor.x;
-        ambient = diffuseColor * ambientSource * factor.x;
+        ambient = diffuseColor * ambientSource;
     }
     else
     {
         diffuse = g_texture.Sample(g_sampler, inData.uv) * color * dTern*factor.x;
         ambient = g_texture.Sample(g_sampler, inData.uv) * ambientSource;
     }
-    return diffuse;
+    //return diffuse+specular+ambient;
 }

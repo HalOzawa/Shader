@@ -31,8 +31,10 @@ class FBX
 		XMMATRIX	matWVP; //スクリーン変換
 		XMMATRIX    matNormal; //法線ワールド変換用
 		XMFLOAT4	diffuseColor; //RGBの拡散反射係数
-		XMFLOAT4    lightPosition;
-		XMFLOAT2    diffuseFactor;
+		XMFLOAT4    diffuseFactor;
+		XMFLOAT4    ambientColor;
+		XMFLOAT4    specularColor;
+		XMFLOAT4    shininess;
 		int		    isTextured;
 	};
 	struct VERTEX
@@ -56,10 +58,10 @@ class FBX
 	void InitIndex(fbxsdk::FbxMesh* mesh);
 	void IntConstantBuffer();
 	void InitMaterial(fbxsdk::FbxNode* pNode);
+	Texture* pToonTex_;
 public:
 	FBX();
 	HRESULT Load(std::string fileName);
 	void    Draw(Transform& transform);
 	void    Release();
 };
-
